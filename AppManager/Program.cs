@@ -13,19 +13,19 @@ namespace AppManager
         {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
 
-            Console.WriteLine("Primary App Started");
+            Console.WriteLine("Launcher App: Started");
 
             launcher = new Launcher(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\..\\..\\..\\..\\TestAppToLaunch\\bin\\Debug\\net6.0\\TestAppToLaunch.exe");
 
             // Close the app if the process was not initialised. No point continuing
             if (launcher.InitialiseProcess() == false)
             {
-                Console.WriteLine("Failed to initialise process. Closing...");
+                Console.WriteLine("Launcher App: Failed to initialise process. Closing...");
                 Task.Delay(1000).Wait();
                 return;
             }
 
-            Console.WriteLine("Process Ready: \nPress \n'a' to start process \n'b' to stop process \n'i' for process information \n'x' to exit");
+            Console.WriteLine("Launcher App: \n\tProcess Ready: \n\tPress \n\t'a' to start process \n\t'b' to stop process \n\t'i' for process information \n\t'x' to exit");
 
             // Keep running, taking approprirate action based on key presses
             bool keepRunning = true; 
@@ -38,28 +38,28 @@ namespace AppManager
                     var key = Console.ReadKey(true).KeyChar;
                     if (key == 'a')
                     {
-                        Console.WriteLine("'a' Pressed; Starting Process");
+                        Console.WriteLine("Launcher App: 'a' Pressed; Starting Process");
                         launcher.StartProcess();
                     }
                     else if (key == 'b')
                     {
-                        Console.WriteLine("'b' Pressed; Stopping Process");
+                        Console.WriteLine("Launcher App: 'b' Pressed; Stopping Process");
                         launcher.StopProcess();
                     }
                     else if (key == 'i')
                     {
-                        Console.WriteLine("'i' Pressed; Displaying process Info");
+                        Console.WriteLine("Launcher App: 'i' Pressed; Displaying process Info");
                         launcher.PrintProcessDetails();
                     }
                     else if (key == 'x')
                     {
-                        Console.WriteLine("'x' Pressed; Closing application");
+                        Console.WriteLine("Launcher App: 'x' Pressed; Closing application");
                         keepRunning = false;
                         Task.Delay(1000);
                     }
                     else
                     {
-                        Console.WriteLine("Invalid Key Pressed: " + key);
+                        Console.WriteLine("Launcher App: Invalid Key Pressed: " + key);
                     }
                 }
             }
@@ -67,7 +67,7 @@ namespace AppManager
 
         static void CurrentDomain_ProcessExit(object? sender, EventArgs e)
         {
-            Console.WriteLine("Event Handler: Process Exit: Stopping Launched Process");
+            Console.WriteLine("Launcher App: Event Handler: Process Exit: Stopping Launched Process");
             if (launcher != null)
             {
                 launcher.StopProcess();
@@ -101,7 +101,7 @@ namespace AppManager
         {
             if (!FileExists)
             {
-                Console.WriteLine("Files does not exist, Cannot continue");
+                Console.WriteLine("Launcher App: Files does not exist, Cannot continue");
                 return;
             }
 
@@ -109,17 +109,17 @@ namespace AppManager
             {
                 if (IsProcessRunning())
                 {
-                    Console.WriteLine("Process already running");
+                    Console.WriteLine("Launcher App: Process already running");
                     return;
                 }
 
                 processReference.Start();
-                Console.WriteLine("Process Created: " + processReference.Id);
+                Console.WriteLine("Launcher App: Process Created: " + processReference.Id);
 
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Failed to create process: " + ex.Message);
+                Console.WriteLine("Launcher App: Failed to create process: " + ex.Message);
             }
         }
 
@@ -128,19 +128,19 @@ namespace AppManager
             if (!IsProcessRunning())
             {
                 // This will happen if the process was already stopped after previosuly being started
-                Console.WriteLine("Process Not Running");
+                Console.WriteLine("Launcher App: Process Not Running");
                 return;
             }
 
-            Console.WriteLine("Process stopping " + processReference.HasExited);
+            Console.WriteLine("Launcher App: Process stopping " + processReference.HasExited);
             try
             {
                 processReference.Kill();
-                Console.WriteLine("Process killed");
+                Console.WriteLine("Launcher App: Process killed");
             }
             catch (Exception e)
             {
-                Console.WriteLine("Process failed to kill: " + e.Message);
+                Console.WriteLine("Launcher App: Process failed to kill: " + e.Message);
             }
         }
 
@@ -151,17 +151,17 @@ namespace AppManager
                 _ = processReference.HasExited; // Initial check to see if a process was ever started.
 
                 string runningState = processReference.HasExited ? "not running" : "running";
-                string timeTag = processReference.HasExited ? "Existed" : "Started";
+                string timeTag = processReference.HasExited ? "Exited" : "Started";
                 string time = processReference.HasExited ? processReference.ExitTime.ToString() : processReference.StartTime.ToString();
 
-                Console.WriteLine($"Process Path    : {processReference.StartInfo.FileName}");
-                Console.WriteLine($"Process ID      : {processReference.Id}");
-                Console.WriteLine($"Process State   : {runningState}");
-                Console.WriteLine($"Process {timeTag} : {time}");
+                Console.WriteLine($"Launcher App: Process Path    : {processReference.StartInfo.FileName}");
+                Console.WriteLine($"Launcher App: Process ID      : {processReference.Id}");
+                Console.WriteLine($"Launcher App: Process State   : {runningState}");
+                Console.WriteLine($"Launcher App: Process {timeTag} : {time}");
             }
             catch (InvalidOperationException)
             {
-                Console.WriteLine("Process never started. No details available");
+                Console.WriteLine("Launcher App: Process never started. No details available");
             }
         }
 
@@ -170,7 +170,7 @@ namespace AppManager
             // Check that file exists
             if (!File.Exists(ProcessToLaunch))
             {
-                Console.WriteLine("File does not exist: " + ProcessToLaunch);
+                Console.WriteLine("Launcher App: File does not exist: " + ProcessToLaunch);
                 FileExists = false;
                 return;
             }

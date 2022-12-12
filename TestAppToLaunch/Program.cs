@@ -4,34 +4,20 @@ namespace MyApp
 {
     internal class Program
     {
+        private const int StopOnCount = 10; 
+
         static void Main(string[] args)
         {
-            Console.WriteLine("Secondary App Started");
+            Console.WriteLine("Demo App: Started");
 
-            _ = new Worker();
-
-            while (true)
+            int counter = 0; 
+            while (counter < StopOnCount)
             {
+                Console.WriteLine("Demo App: Looping " + counter++);
                 Task.Delay(1000).Wait();
             }
-        }
-    }
-}
 
-public class Worker
-{
-    public Worker()
-    {
-        _ = DoWork();
-    }
-
-    private async Task DoWork()
-    {
-        int counter = 0;
-        while (true)
-        {
-            Console.WriteLine("Looping " + counter++);
-            await Task.Delay(1000);
+            Console.WriteLine($"Demo App: Closing itself after {counter} itterations");
         }
     }
 }
