@@ -25,7 +25,7 @@ namespace AppManager
                 return;
             }
 
-            Console.WriteLine("Process Ready: Press 'a' to start process, and 'b' to stop it");
+            Console.WriteLine("Process Ready: \nPress \n'a' to start process \n'b' to stop process \n'i' for process information \n'x' to exit");
 
             // Keep running, taking approprirate action based on key presses
             bool keepRunning = true; 
