@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 
 namespace AppManager
 {
@@ -14,7 +15,7 @@ namespace AppManager
 
             Console.WriteLine("Primary App Started");
 
-            launcher = new Launcher("C:\\Git\\ServiceTest\\TestAppToLaunch\\bin\\Debug\\net6.0\\TestAppToLaunch.exe");
+            launcher = new Launcher(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\..\\..\\..\\..\\TestAppToLaunch\\bin\\Debug\\net6.0\\TestAppToLaunch.exe");
 
             // Close the app if the process was not initialised. No point continuing
             if (launcher.InitialiseProcess() == false)
