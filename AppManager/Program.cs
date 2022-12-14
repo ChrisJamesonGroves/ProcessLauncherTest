@@ -8,9 +8,15 @@ namespace AppManager
     /// </summary>
     internal class Program
     {
+        // This is used to identify apps to be killed. So if you change this, or create a new application
+        // to be managed by this AppManager, then ensure to change the application 'company' name. This
+        // is found by right clicking the Project > Properties > Package > General > Company.
+        const string CompanyName = "AcmeInc";
         static Launcher? launcher;
+        
         static void Main(string[] args)
         {
+
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
 
             Console.WriteLine("Launcher App: Started");
@@ -25,7 +31,16 @@ namespace AppManager
                 return;
             }
 
-            Console.WriteLine("Launcher App: \n\tProcess Ready: \n\tPress \n\t'a' to start process \n\t'b' to stop process \n\t'i' for process information \n\t'x' to exit");
+            Console.WriteLine("Launcher App: \n" +
+                "\tProcess Ready: \n" +
+                "\tPress \n" +
+                "\t'a' to start process \n" +
+                "\t'b' to stop process \n" +
+                "\t'i' for process information \n" +
+                "\t'e' to force an exception in this manager \n" +
+                "\t'p' to print processes \n" +
+               $"\t'k' to kill all {CompanyName} processes \n" +
+                "\t'x' to exit");
 
             // Keep running, taking approprirate action based on key presses
             bool keepRunning = true; 
@@ -51,11 +66,26 @@ namespace AppManager
                         Console.WriteLine("Launcher App: 'i' Pressed; Displaying process Info");
                         launcher.PrintProcessDetails();
                     }
+                    else if (key == 'e')
+                    {
+                        Console.WriteLine("Launcher App: 'e' Pressed; Throwing Exception");
+                        throw new Exception("Test Exeption thrown");
+                    }
                     else if (key == 'x')
                     {
                         Console.WriteLine("Launcher App: 'x' Pressed; Closing application");
                         keepRunning = false;
                         Task.Delay(1000);
+                    }
+                    else if (key == 'p')
+                    {
+                        Console.WriteLine("Launcher App: 'p' Pressed; Printing Processes");
+                        PrintProcesses();
+                    }
+                    else if (key == 'k')
+                    {
+                        Console.WriteLine($"Launcher App: 'k' Pressed; Killing {CompanyName} Processes");
+                        KillCompanyProcesses();
                     }
                     else
                     {
@@ -72,6 +102,61 @@ namespace AppManager
             {
                 launcher.StopProcess();
             }
+        }
+
+        static void PrintProcesses()
+        {
+            var CompanyProcesses = GetCompanyProcesses();
+
+            if (CompanyProcesses.Count == 0) return;
+
+            foreach (Process thisProc in CompanyProcesses)
+            {
+                Console.WriteLine($"{CompanyName} Process Still Running: " + thisProc.ProcessName);
+            }
+        }
+
+        static void KillCompanyProcesses()
+        {
+            var CompanyProcesses = GetCompanyProcesses();
+            int killCount = 0;
+
+            foreach (Process thisProc in CompanyProcesses)
+            {
+                if (thisProc.Id == Process.GetCurrentProcess().Id)
+                    continue;
+
+                Console.WriteLine("Killing Process: " + thisProc.ProcessName);
+                killCount++;
+                thisProc.Kill();
+            }
+
+            Console.WriteLine($"Killed {killCount} Process(es)");
+        }
+
+        static List<Process> GetCompanyProcesses()
+        {
+            Process[] all = Process.GetProcesses();
+            List<Process> CompanyProcesses = new List<Process>();
+
+            foreach (Process thisProc in all)
+            {
+                try
+                {
+                    string? name = thisProc?.MainModule?.FileVersionInfo.CompanyName;
+
+                    if (thisProc != null && name == CompanyName)
+                    {
+                        CompanyProcesses.Add(thisProc);
+                    }
+                }
+                catch
+                {
+                    // Do nothing, we arent interested in processes without CompanyName
+                }
+            }
+
+            return CompanyProcesses;
         }
     }
 
