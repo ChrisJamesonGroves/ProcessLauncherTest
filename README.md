@@ -4,12 +4,12 @@ A little C# test solution that manages the starting and stopping of a process.
 This contains 2 projects; 
 
 **AppManager** is the main application for Starting, Stopping and getting information about the secondary app. 
-This prevents multiple of the same application from being launched and will not crash if trying to stop the app 
+This prevents multiple of the same application from being launched and will not crash if trying to stop the app sdfsdfds
 when its not running.
 
 This can currently:
 * Start the process - This will only allow one instance of the process to be started at a time
-* Stop the process
+* Stop the processsdf
 * Get process information - This will print basic information including process name and current state (running/ not running)
 * Force an exception - This is to prove that if the AppManager crashes the launched app will become orphaned.
 * Print all apps running which has the corresponding Company name (currently set to 'AcmeInc'). Details to change this are in AppManager > Process.cs file
